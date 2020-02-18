@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Insight Software Consortium
+ *  Copyright NumFOCUS
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  *  limitations under the License.
  *
  *=========================================================================*/
+
 #include "itkMGHImageIO.h"
 #include "itkByteSwapper.h"
 #include "itkMetaDataObject.h"
@@ -107,7 +108,7 @@ MGHImageIO
 {
   this->SetNumberOfDimensions(3);
   std::fill(m_Dimensions.begin(), m_Dimensions.end(), 0U);
-  m_ByteOrder = ( ByteSwapper<int>::SystemIsBigEndian() ) ? BigEndian : LittleEndian;
+  m_ByteOrder = ( ByteSwapper<int>::SystemIsBigEndian() ) ? IOByteOrderEnum::BigEndian : IOByteOrderEnum::LittleEndian;
 }
 
 MGHImageIO
@@ -237,33 +238,33 @@ MGHImageIO
     {
     case MRI_UCHAR:
       {
-      m_ComponentType = UCHAR;
+      m_ComponentType = IOComponentEnum::UCHAR;
       }
       break;
     case MRI_INT:
       {
-      m_ComponentType = INT;
+      m_ComponentType = IOComponentEnum::INT;
       }
       break;
     case MRI_FLOAT:
       {
-      m_ComponentType = FLOAT;
+      m_ComponentType = IOComponentEnum::FLOAT;
       }
       break;
     case MRI_SHORT:
       {
-      m_ComponentType = SHORT;
+      m_ComponentType = IOComponentEnum::SHORT;
       }
       break;
     case MRI_TENSOR:
       {
-      m_ComponentType = FLOAT;
+      m_ComponentType = IOComponentEnum::FLOAT;
       m_NumberOfComponents = 9;
       }
       break;
     default:
       itkExceptionMacro(<< " Unknown data type " << type << " using float by default.");
-      m_ComponentType = FLOAT;
+      m_ComponentType = IOComponentEnum::FLOAT;
     }
 
   // Next short says whether RAS registration information is good.
@@ -483,25 +484,25 @@ MGHImageIO
 
   switch( m_ComponentType )
     {
-    case UCHAR:
+    case IOComponentEnum::UCHAR:
       {
       ByteSwapper<unsigned char>::SwapRangeFromSystemToBigEndian( (unsigned char *)buffer,
                                                                   numberOfPixels);
       }
       break;
-    case SHORT:
+    case IOComponentEnum::SHORT:
       {
       ByteSwapper<short>::SwapRangeFromSystemToBigEndian( (short *)buffer,
                                                           numberOfPixels);
       }
       break;
-    case INT:
+    case IOComponentEnum::INT:
       {
       ByteSwapper<int>::SwapRangeFromSystemToBigEndian( (int *)buffer,
                                                         numberOfPixels);
       }
       break;
-    case FLOAT:
+    case IOComponentEnum::FLOAT:
       {
       ByteSwapper<float>::SwapRangeFromSystemToBigEndian( (float *)buffer,
                                                           numberOfPixels);
@@ -610,22 +611,22 @@ MGHImageIO
   // type
   switch( m_ComponentType )
     {
-    case UCHAR:
+    case IOComponentEnum::UCHAR:
       {
       this->TWrite<int,int>(MRI_UCHAR);
       }
       break;
-    case INT:
+    case IOComponentEnum::INT:
       {
       this->TWrite<int,int>(MRI_INT);
       }
       break;
-    case FLOAT:
+    case IOComponentEnum::FLOAT:
       {
       this->TWrite<int,int>(MRI_FLOAT);
       }
       break;
-    case SHORT:
+    case IOComponentEnum::SHORT:
       {
       this->TWrite<int,int>(MRI_SHORT);
       }
@@ -791,22 +792,22 @@ MGHImageIO
   unsigned int returnValue;
   switch( m_ComponentType )
     {
-  case UCHAR:
+  case IOComponentEnum::UCHAR:
       {
       returnValue = sizeof(unsigned char);
       }
     break;
-  case SHORT:
+  case IOComponentEnum::SHORT:
       {
       returnValue = sizeof(short);
       }
     break;
-  case INT:
+  case IOComponentEnum::INT:
       {
       returnValue = sizeof(int);
       }
     break;
-  case FLOAT:
+  case IOComponentEnum::FLOAT:
       {
       returnValue = sizeof(float);
       }
